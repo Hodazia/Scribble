@@ -1,0 +1,50 @@
+
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id      String     @id @default(uuid())
+  email   String   @unique
+  password    String 
+  name  String
+  photo String?
+  rooms Room[]
+  chats Chat[]
+}
+// user can have multiple rooms but each room can have a specific user
+
+
+// slug ?? , short hand for chemistry class, CSE class
+// u can't have two rooms with the same class
+model Room {
+  id Int  @id @default(autoincrement())
+  slug String @unique
+  createdAt DateTime @default(now()) // default point to the current time
+  adminId String 
+  admin   User   @relation(fields: [adminId], references: [id])
+  chats Chat[]
+}
+
+/*
+every chat "hi " will be saved in teh Chat, 
+every chat will have an assosciated user, 
+
+at the moment we are sending message, but we will be sending an object
+canva like , 
+*/
+model Chat{
+  id Int @id @default(autoincrement())
+  roomId Int
+  message String
+  userId String
+  room Room  @relation(fields: [roomId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+}
