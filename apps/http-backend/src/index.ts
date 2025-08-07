@@ -135,6 +135,29 @@ app.post("/room", auth, async (req:Request,res:Response) => {
     }
 })
 
+
+app.get("/chats/:roomId", async (req:Request,res:Response) => {
+  try{
+    const room = Number(req.params.roomId);
+
+  await prismaclient.chat.findMany({
+    where:{
+      roomId:room
+    },
+    orderBy: {
+      id: "desc"
+    },
+    take: 1000
+  })
+  }
+  catch(e)
+  {
+    res.json({
+      "messages":[]
+    })
+  }
+  
+})
 app.listen(5000, () => {
     console.log("greetings u are connected now !");
 })
