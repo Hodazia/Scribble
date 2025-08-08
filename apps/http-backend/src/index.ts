@@ -140,7 +140,7 @@ app.get("/chats/:roomId", async (req:Request,res:Response) => {
   try{
     const room = Number(req.params.roomId);
 
-  await prismaclient.chat.findMany({
+  const messages = await prismaclient.chat.findMany({
     where:{
       roomId:room
     },
@@ -149,6 +149,9 @@ app.get("/chats/:roomId", async (req:Request,res:Response) => {
     },
     take: 1000
   })
+  res.json({
+    messages
+})
   }
   catch(e)
   {
@@ -157,6 +160,19 @@ app.get("/chats/:roomId", async (req:Request,res:Response) => {
     })
   }
   
+})
+
+app.get("/room/:slug", async (req, res) => {
+  const slug = req.params.slug;
+  const room = await prismaclient.room.findFirst({
+      where: {
+          slug
+      }
+  });
+
+  res.json({
+      room
+  })
 })
 app.listen(5000, () => {
     console.log("greetings u are connected now !");
