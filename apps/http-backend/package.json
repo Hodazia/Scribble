@@ -11,8 +11,7 @@
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "@repo/backend-common":"workspace:*",
-    "@repo/common-zod":"workspace:*",
-    "@repo/db":"workspace:*"
+    "@repo/common-zod":"workspace:*"
   },
   "keywords": [],
   "author": "",

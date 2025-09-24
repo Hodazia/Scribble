@@ -1,8 +1,11 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -11,40 +14,35 @@ datasource db {
 }
 
 model User {
-  id      String     @id @default(uuid())
-  email   String   @unique
-  password    String 
-  name  String
-  photo String?
-  rooms Room[]
+  id  String @id @default(cuid())
+  name String
+  email String
+  password String
+  image String?
+  joinedroom Room[]
   chats Chat[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
-// user can have multiple rooms but each room can have a specific user
 
 
-// slug ?? , short hand for chemistry class, CSE class
-// u can't have two rooms with the same class
 model Room {
-  id Int  @id @default(autoincrement())
+  id String @id @default(cuid())
   slug String @unique
-  createdAt DateTime @default(now()) // default point to the current time
-  adminId String 
-  admin   User   @relation(fields: [adminId], references: [id])
+  adminId String
+  admin  User  @relation(fields: [adminId], references: [id])
   chats Chat[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-/*
-every chat "hi " will be saved in teh Chat, 
-every chat will have an assosciated user, 
-
-at the moment we are sending message, but we will be sending an object
-canva like , 
-*/
-model Chat{
-  id Int @id @default(autoincrement())
-  roomId Int
+model Chat {
+  id String @id @default(cuid())
+  userId    String
   message String
-  userId String
-  room Room  @relation(fields: [roomId], references: [id])
+  roomId    String
+  room    Room @relation(fields: [roomId], references: [id])
   user User @relation(fields: [userId], references: [id])
 }
