@@ -1,12 +1,27 @@
 import { WebSocketServer, WebSocket } from "ws";
 import jwt from "jsonwebtoken";
 import { JwtPayload } from "jsonwebtoken";
-import  { prismaclient } from "@repo/db/client"
-
+// import  { prismaclient } from "@repo/db/client"
+import { prismaclient } from "@repo/db/client";
 import {JWT_SECRET} from "@repo/backend-common/config"
 // we will have a global JWT_SECRET, in the packages folder
 // create a new web socket server with a port of 8080
 
+
+
+
+/*
+{
+    "type":"join_room",
+    "roomId":"chat-room",
+    "message":"hi there"
+}
+
+we  verify the user by checking and extracting the token present in the url,
+First extract the token and then use checkUser function to verify if the user is signed in or not!
+
+
+*/
 // create a function, checkUser, 
 function checkUser(token:string): string | null
 {
@@ -36,6 +51,7 @@ interface User {
     userId: string
   }
   
+// each user can belong to many rooms!!, 
   const users: User[] = [];
 wss.on("connection", (ws,request) => {
     console.log("web socket connection is made ");
@@ -70,7 +86,7 @@ wss.on("connection", (ws,request) => {
           })
     ws.on("message",async (data) => {
         console.log("Message received is ", data);
-        ws.send("greetings i have received ur message ");
+        // ws.send("greetings i have received ur message ");
 
         // the data from the client will be sent as string,we have to parse it
         let parsedData;
@@ -81,6 +97,7 @@ wss.on("connection", (ws,request) => {
         }
     
         if (parsedData.type === "join_room") {
+          console.log("The parsedData from the client is ", parsedData);
           const user = users.find(x => x.ws === ws);
           user?.rooms.push(parsedData.roomId);
         }
@@ -98,6 +115,7 @@ wss.on("connection", (ws,request) => {
           
           */
           if (parsedData.type === "chat") {
+            console.log("The parsedData from the client is ", parsedData);
             const roomId = parsedData.roomId;
             const message = parsedData.message;
 
@@ -115,13 +133,13 @@ wss.on("connection", (ws,request) => {
                 }
             })
 
-            await prismaclient.chat.create({
-                data:{
-                    roomId,
-                    message,
-                    userId
-                }
-            })
+            // await prismaclient.chat.create({
+            //     data:{
+            //         roomId,
+            //         message,
+            //         userId
+            //     }
+            // })
           }
 
     })
