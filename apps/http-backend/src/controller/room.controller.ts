@@ -46,6 +46,7 @@ export const handleCreateRoom = async (
       success: true,
       message: "Room created successfully",
       data: room,
+      roomId:room.id
     });
   } catch (error) {
     console.error("Create Room error:", error);

@@ -29,6 +29,7 @@ export default function auth(req:RequestWithUserId,res:Response,next:NextFunctio
             return;
         }else{
             res.status(403).json({ message: "User not verified" });
+            console.log("user not verified! ")
             return;
         }
 
