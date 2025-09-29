@@ -37,8 +37,8 @@ export const handleCreateRoom = async (
     // const newRoom = await prismaclient.room.create({ data: { adminId: userId } });
     const room = await prismaclient.room.create({
         data: {
-            slug: parsed.data.name,
-            adminId: userId
+            slug: parsed.data.name,  // a room name
+            adminId: userId // who created the room
         }
     })
 

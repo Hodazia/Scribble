@@ -67,9 +67,14 @@ export const handleLoginUser = async (req: Request, res: Response) => {
           errors: parsed.error,
         });
       }
+      // const user = await prismaclient.user.findUnique({
+      //   where: { email:email },
+      // });
       const user = await prismaclient.user.findFirst({
-        where: { email },
-      });
+        where: {
+          email: parsed?.data?.email,
+        },
+      })
       if (!user) {
         return res.status(400).json({
           success: false,

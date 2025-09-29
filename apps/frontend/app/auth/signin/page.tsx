@@ -1,3 +1,5 @@
+'use client'
+
 import { AuthPage } from "@/component/auth/Authpage";
 
 export default function Signin() {

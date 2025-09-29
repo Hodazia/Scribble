@@ -33,6 +33,7 @@ export function protectedRoute(
       name: string;
     };
 
+    console.log("decoded is ", decoded);
     req.user = { id: decoded.id, email: decoded.email, name: decoded.name };
     next();
   } catch (err) {
