@@ -18,6 +18,30 @@ router.get("/chats/:roomId", async (
       // Wrap async logic in a synchronous handler
       (async () => {
           try {
+            // get the latest 50 chats,
+            /*
+          The output response will be something like this!
+          [
+    {
+        "id": 6,
+        "userId": "cmg4vyaz30000ofrs0q61tf9v",
+        "message": "{\"shape\":{\"type\":\"rect\",\"x\":30,\"y\":30}}",
+        "roomId": 2
+    },
+    {
+        "id": 5,
+        "userId": "cmg4vyaz30000ofrs0q61tf9v",
+        "message": "{\"shape\":{\"type\":\"rect\",\"x\":10,\"y\":20}}",
+        "roomId": 2
+    },
+    {
+        "id": 4,
+        "userId": "cmg4vyaz30000ofrs0q61tf9v",
+        "message": "{\"shape\":{\"type\":\"rect\",\"x\":10,\"y\":20}}",
+        "roomId": 2
+    }
+]
+                */
               const chats = await prismaclient.chat.findMany({
                 //@ts-ignore
                   where: { roomId },
