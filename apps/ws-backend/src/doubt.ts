@@ -181,3 +181,130 @@
 // </body>
 // </html>
 // */
+
+
+// an alternative to index.ts websocket server
+/*
+import { WebSocketServer, WebSocket } from "ws";
+import jwt from "jsonwebtoken";
+import { parse } from "url";
+import { prismaclient } from "@repo/db/client";
+import { JWT_SECRET } from "@repo/backend-common/config";
+
+interface User {
+  userId: string;
+  rooms: string[];
+  ws: WebSocket;
+}
+
+interface WSMessage {
+  type: "join_room" | "leave_room" | "draw_event" | "chat_message";
+  roomId?: number;
+  message?: string;
+}
+
+const wss = new WebSocketServer({ port: Number(process.env.PORT) || 8080 });
+let users: User[] = [];
+
+function verifyToken(token: string): string | null {
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    if (typeof decoded === "string" || !decoded?.id) return null;
+    return decoded.id;
+  } catch {
+    return null;
+  }
+}
+
+function broadcast(roomId: number, sender: WebSocket, data: any) {
+  users.forEach((user) => {
+    if (user.ws !== sender && user.rooms.includes(String(roomId))) {
+      user.ws.send(JSON.stringify(data));
+    }
+  });
+}
+
+async function handleDrawEvent(userId: string, ws: WebSocket, msg: any) {
+  const { roomId, message } = msg;
+  const parsed = JSON.parse(message);
+
+  if (parsed.action === "update") {
+    await prismaclient.chat.update({
+      where: { id: parsed.id },
+      data: { message: JSON.stringify({ shape: parsed.shape }) },
+    });
+  } else {
+    const chat = await prismaclient.chat.create({
+      data: {
+        roomId: Number(roomId),
+        userId,
+        message: JSON.stringify({ shape: parsed.shape }),
+      },
+    });
+    parsed.id = chat.id;
+  }
+
+  broadcast(roomId, ws, {
+    type: "draw_event",
+    roomId,
+    message: JSON.stringify(parsed),
+  });
+}
+
+async function handleChatMessage(userId: string, ws: WebSocket, msg: any) {
+  const { roomId, message } = msg;
+  if (!roomId || !message) return;
+
+  // Save message in DB
+  await prismaclient.message.create({
+    data: { roomId, userId, message },
+  });
+
+  // Broadcast to other users
+  broadcast(roomId, ws, { type: "chat_message", roomId, message, userId });
+}
+
+wss.on("connection", (ws, request) => {
+  const { query } = parse(request.url || "", true);
+  const token = typeof query.token === "string" ? query.token : "";
+  const userId = verifyToken(token);
+
+  if (!userId) return ws.close();
+
+  const currentUser: User = { userId, rooms: [], ws };
+  users.push(currentUser);
+
+  ws.on("message", async (raw) => {
+    try {
+      const msg: WSMessage = JSON.parse(raw.toString());
+      if (!msg.type) return;
+
+      switch (msg.type) {
+        case "join_room":
+          currentUser.rooms.push(String(msg.roomId));
+          break;
+        case "leave_room":
+          currentUser.rooms = currentUser.rooms.filter((r) => r !== String(msg.roomId));
+          break;
+        case "draw_event":
+          await handleDrawEvent(userId, ws, msg);
+          break;
+        case "chat_message":
+          await handleChatMessage(userId, ws, msg);
+          break;
+        default:
+          ws.send(JSON.stringify({ type: "error", message: "Unknown message type" }));
+      }
+    } catch (err) {
+      console.error("Error:", err);
+      ws.send(JSON.stringify({ type: "error", message: "Invalid message format" }));
+    }
+  });
+
+  ws.on("close", () => {
+    users = users.filter((u) => u.ws !== ws);
+  });
+});
+
+
+*/

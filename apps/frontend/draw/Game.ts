@@ -1,189 +1,156 @@
-import { Shape,Tool } from "./type";
-import getExistingShapes from "./httpfetch";
+import axios from "axios";
+import { Shape } from "./type";
+import { Tool } from "./type";
+import { HTTP_BACKEND } from "@/config";
 
-interface ShapeWithId {
-    id?: number;
-    clientId?: string;
-    shape: Shape;
+
+export async function initDraw(canvas:HTMLCanvasElement,selectedTool:Tool,roomId:string)
+{
+    const ctx = canvas.getContext('2d');
+    // let existingShapes : Shape[] = [];
+    let existingShapes: Shape[] = await getExistingShapes(roomId)
+
+        if(!ctx)
+        {
+          return
+        }
+
+        // ctx?.strokeRect(10,10,100,100);
+        // ctx?.strokeRect(30,40,130,140);
+        // ctx.fillStyle =  'rgba(255,0,3,0.5)';
+        //let's run a loop and create a rectangle
+
+        //creating random rects
+        // for (var i = 0; i < 3; i++) {
+        //   var x = Math.random() * canvasRef.current.width;
+        //   var y = Math.random() * canvasRef.current.height;
+        //   ctx.strokeRect(x, y, x+50,y+50);
+        //   ctx.strokeStyle = "#ae2131";
+        // }
+
+        clearCanvas(existingShapes,ctx,canvas);
+        let startX = 0;
+        let startY = 0;
+        let clicked = false;
+
+        canvas.addEventListener("mousedown", (e) => {
+          console.log(e.clientX);
+          console.log(e.clientY);
+
+          startX = e.clientX;
+          startY = e.clientY;
+          clicked = true;
+        })
+
+        canvas.addEventListener("mousemove", (e)=> {
+            if(clicked)
+            {
+            const newx = e.clientX - startX;
+            const newy = e.clientY - startY;
+
+            //   ctx.clearRect(0, 0, canvas.width, canvas.height);
+            clearCanvas(existingShapes,ctx,canvas);
+            if(selectedTool=='rectangle')
+            {
+                ctx.strokeRect(startX,startY,newx,newy);
+            }
+            else if(selectedTool=='circle')
+            {
+                // ctx.strokeStyle = '#a12c21';
+            const radius = Math.sqrt(newx*newx + newy*newy);
+            ctx.beginPath();
+            ctx.arc(startX, startY,radius, 0, Math.PI * 2);
+            ctx.strokeStyle = "red";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            }
+            
+            }
+          
+
+        })
+
+        canvas.addEventListener("mouseup", (e) => {
+            clicked = false
+          const newx = e.clientX - startX;
+          const newy = e.clientY - startY;
+
+          if(selectedTool=="rectangle")
+          {
+            existingShapes.push({
+                type:"rectangle",
+                x:startX,
+                y:startY,
+                width:newx,
+                height:newy
+              })
+          }
+          else if(selectedTool=="circle")
+          {
+            const radius = Math.sqrt(newx * newx + newy * newy);
+            
+            existingShapes.push({
+                type:"circle",
+                x:startX,
+                y:startY,
+                radius:radius,
+              })
+          }
+
+        //   ctx.clearRect(0, 0, canvas.width, canvas.height);
+        //   ctx.strokeRect(startX,startY,newx,newy);
+        //   ctx.strokeStyle = '#a12c21';
+
+          //only at mouseup u should send the message else no!
+          
+        })
+      
 }
-export class Game {
 
-    private canvas: HTMLCanvasElement;
-    private ctx: CanvasRenderingContext2D;
-    private existingShapes: ShapeWithId[] = [];
-    private roomId: string;
-    private clicked: boolean;
-    private startX = 0;
-    private startY = 0;
-    private selectedTool: Tool = "circle";
-
-    socket: WebSocket;
-
-    constructor(canvas: HTMLCanvasElement, roomId: string, socket: WebSocket) {
-        this.canvas = canvas;
-        this.ctx = canvas.getContext("2d")!;
-        this.existingShapes = [];
-        this.roomId = roomId;
-        this.socket = socket;
-        this.clicked = false;
-        this.init();
-        this.initHandlers();
-        this.initMouseHandlers();
+function clearCanvas(existingShapes:Shape[],ctx:CanvasRenderingContext2D,canvas:HTMLCanvasElement)
+{
+// clear the canvas and render all the exising shapes
+ctx.clearRect(0,0,canvas.width,canvas.height);
+ctx.fillStyle = 'rgba(0,0,0)'
+ctx.fillRect(0,0,canvas.height,canvas.width);
+existingShapes.map((shape) => {
+    if(shape.type=="rectangle")
+    {
+        ctx.strokeRect(shape.x,shape.y,shape.width,shape.height);
+        ctx.strokeStyle = "blue"
     }
-    
-    destroy() {
-        this.canvas.removeEventListener("mousedown", this.mouseDownHandler)
+    else if(shape.type=="circle")
+    {
+        //draw an arc , calculate the radius
+        // (x,y) -> (xn,yn), optional
 
-        this.canvas.removeEventListener("mouseup", this.mouseUpHandler)
+        // const radius = Math.sqrt(
+        //     Math.pow(shape.x - shape.startPos.x, 2) + Math.pow(y - startPos.y, 2)
+        //     );
 
-        this.canvas.removeEventListener("mousemove", this.mouseMoveHandler)
+        ctx.beginPath();
+        ctx.arc(shape.x, shape.y, shape.radius, 0, Math.PI * 2);
+        ctx.strokeStyle = "red";
+        // ctx.fillStyle = "blue"; // set fill color
+        // ctx.fill(); // ✅ fills the circle
+        ctx.lineWidth = 2;
+        ctx.stroke();
     }
+})
+}
 
-    setTool(tool: Tool) {
-        this.selectedTool = tool;
-    }
+async function getExistingShapes(roomId:string)
+{
+    // in a particular room what are the chats or shapes available
+    // returns an array of chats or shapes
+    const res = await axios.get(`${HTTP_BACKEND}/api/v1/rooms/chats/${roomId}`);
+    const message = await res.data.messages;
 
-    async init() {
-        this.existingShapes = await getExistingShapes(this.roomId);
-        console.log(this.existingShapes);
-        this.clearCanvas();
-    }
+    const shapes = message.map((x:{message:string}) =>{
+        const parsedmessage = JSON.parse(x.message)
+        return parsedmessage;
+    })
+    //
+    return shapes;
 
-    initHandlers() {
-        this.socket.onmessage = (event) => {
-            const message = JSON.parse(event.data);
-
-            if (message.type == "chat") {
-                const parsedShape = JSON.parse(message.message)
-                this.existingShapes.push(parsedShape.shape)
-                this.clearCanvas();
-            }
-        }
-    }
-
-    clearCanvas() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.ctx.fillStyle = "rgba(0, 0, 0)"
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-        // this.existingShapes.map((shape) => {
-        //     if (shape.type === "rect") {
-        //         this.ctx.strokeStyle = "rgba(255, 255, 255)"
-        //         this.ctx.strokeRect(shape.x, shape.y, shape.width, shape.height);
-        //     } else if (shape.type === "circle") {
-        //         console.log(shape);
-        //         this.ctx.beginPath();
-        //         this.ctx.arc(shape.centerX, shape.centerY, Math.abs(shape.radius), 0, Math.PI * 2);
-        //         this.ctx.stroke();
-        //         this.ctx.closePath();                
-        //     }
-        // })
-        this.existingShapes.forEach((item, index) => {
-            const shape = item.shape;
-            console.log(
-                "Clear canvas called, shape type pushed into db:",
-                shape.type,
-                "with index:",
-                index
-            );
-            if (shape.type === "rectangle") {
-                this.ctx.strokeStyle = "white";
-                this.ctx.strokeRect(
-                    shape.x,
-                    shape.y,
-                    shape.width,
-                    shape.height
-                );
-            }
-            if (shape.type === "circle") {
-                this.ctx.strokeStyle = "white";
-                this.ctx.beginPath();
-                this.ctx.arc(shape.x, shape.y, shape.radius, 0, Math.PI * 2);
-                this.ctx.stroke();
-            }
-            if (shape.type === "line") {
-                this.ctx.strokeStyle = "white";
-                this.ctx.beginPath();
-                this.ctx.moveTo(shape.x1, shape.y1);
-                this.ctx.lineTo(shape.x2, shape.y2);
-                this.ctx.stroke();
-            }
-        });
-    }
-
-    mouseDownHandler = (e:any) => {
-        this.clicked = true
-        this.startX = e.clientX
-        this.startY = e.clientY
-    }
-    mouseUpHandler = (e:any) => {
-        this.clicked = false
-        const width = e.clientX - this.startX;
-        const height = e.clientY - this.startY;
-
-        const selectedTool = this.selectedTool;
-        let shape: Shape | null = null;
-        if (selectedTool === "rect") {
-
-            shape = {
-                type: "rect",
-                x: this.startX,
-                y: this.startY,
-                height,
-                width
-            }
-        } else if (selectedTool === "circle") {
-            const radius = Math.max(width, height) / 2;
-            shape = {
-                type: "circle",
-                radius: radius,
-                centerX: this.startX + radius,
-                centerY: this.startY + radius,
-            }
-        }
-
-        if (!shape) {
-            return;
-        }
-
-        this.existingShapes.push(shape);
-
-        this.socket.send(JSON.stringify({
-            type: "chat",
-            message: JSON.stringify({
-                shape
-            }),
-            roomId: this.roomId
-        }))
-    }
-    mouseMoveHandler = (e:any) => {
-        if (this.clicked) {
-            const width = e.clientX - this.startX;
-            const height = e.clientY - this.startY;
-            this.clearCanvas();
-            this.ctx.strokeStyle = "rgba(255, 255, 255)"
-            const selectedTool = this.selectedTool;
-            console.log(selectedTool)
-            if (selectedTool === "rect") {
-                this.ctx.strokeRect(this.startX, this.startY, width, height);   
-            } else if (selectedTool === "circle") {
-                const radius = Math.max(width, height) / 2;
-                const centerX = this.startX + radius;
-                const centerY = this.startY + radius;
-                this.ctx.beginPath();
-                this.ctx.arc(centerX, centerY, Math.abs(radius), 0, Math.PI * 2);
-                this.ctx.stroke();
-                this.ctx.closePath();                
-            }
-        }
-    }
-
-    initMouseHandlers() {
-        this.canvas.addEventListener("mousedown", this.mouseDownHandler)
-
-        this.canvas.addEventListener("mouseup", this.mouseUpHandler)
-
-        this.canvas.addEventListener("mousemove", this.mouseMoveHandler)    
-
-    }
 }

@@ -42,8 +42,8 @@ export function AuthPage({ isSignin }: { isSignin: boolean }) {
       const data = await response.json();
 
       if (isSignin) {
-        // localStorage.setItem("token", data.token);
-        router.push("/");
+        localStorage.setItem("token", data.token);
+        router.push("/create");
       } else {
         router.push("/signin");
       }

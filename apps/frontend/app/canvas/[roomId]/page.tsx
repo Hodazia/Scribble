@@ -1,8 +1,10 @@
 
-import RoomCanvas from "@/component/RoomCanvas";
 
 // this is a server component and the RoomCanvas is a client component,
 // canvas is white by default
+
+import Canvas from "@/component/Canvas";
+
 /*
 this component extracts the roomId from the params and passes it to the RoomCanvas
 which again passes it to Canvas component
@@ -17,11 +19,23 @@ type Circle = {
     radius: number;
   };
   
+/*
 
-export default async function CanvasPage({params} : {params: {roomId : string}})
+it has to be authenticated so that only authenticated user can enter this page,
+like canvas/123 , roomId is an integer, it is a id autoincrement
+not a slug!
+
+*/
+
+export default async function CanvasPage({
+  params,
+}: {params: Promise<{roomId: string}>})
 {
-    const roomId = (await params).roomId;
-    console.log("The roomid is ", roomId);
+  const { roomId } = await params;
+  console.log("Rendering canvas for roomId:", roomId); // Debug log
+  
 
-    return <RoomCanvas  roomId={roomId}/>
+    return <div>
+      <Canvas roomId={roomId}/>
+    </div>
 }

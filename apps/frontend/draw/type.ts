@@ -5,14 +5,14 @@ export type Shape =
           y: number;
           width: number;
           height: number;
-          clientId: string;
+          clientId?: string;
       }
     | {
           type: "circle";
           x: number;
           y: number;
           radius: number;
-          clientId: string;
+          clientId?: string;
       }
     | {
           type: "line";
@@ -20,7 +20,7 @@ export type Shape =
           y1: number;
           x2: number;
           y2: number;
-          clientId: string;
+          clientId?: string;
       }
     | {
           type: "select";
