@@ -2,7 +2,7 @@ import axios from "axios";
 import { HTTP_BACKEND } from "@/config";
 
 async function getExistingShapes(roomId: string) {
-    const response = await axios.get(`${HTTP_BACKEND}/chats/${roomId}`);
+    const response = await axios.get(`${HTTP_BACKEND}/api/v1/rooms/chats/${roomId}`);
     const messages = response.data;
 
     const shapesWithId = messages.map((x: { id: number; message: string }) => {

@@ -2,18 +2,31 @@ import axios from "axios";
 import { Shape } from "./type";
 import { Tool } from "./type";
 import { HTTP_BACKEND } from "@/config";
+// import getExistingShapes from "./httpfetch";
 
-
-export async function initDraw(canvas:HTMLCanvasElement,selectedTool:Tool,roomId:string)
+export async function initDraw(canvas:HTMLCanvasElement,selectedTool:Tool,roomId:string,socket:WebSocket)
 {
     const ctx = canvas.getContext('2d');
     // let existingShapes : Shape[] = [];
-    let existingShapes: Shape[] = await getExistingShapes(roomId)
+    const shapes = await getExistingShapes(roomId)
+    console.log("The shapes i get from the be is ", shapes);
+    let existingShapes: Shape[]  = shapes;
 
         if(!ctx)
         {
           return
         }
+
+        socket.onmessage = (event) => {
+          console.log("The event data from the socket client ", event.data);
+          const message = JSON.parse(event.data);
+  
+          if (message.type == "chat") {
+              const parsedShape = JSON.parse(message.message)
+              existingShapes.push(parsedShape.shape)
+              clearCanvas(existingShapes, ctx, canvas);
+          }
+      }
 
         // ctx?.strokeRect(10,10,100,100);
         // ctx?.strokeRect(30,40,130,140);
@@ -37,34 +50,26 @@ export async function initDraw(canvas:HTMLCanvasElement,selectedTool:Tool,roomId
           console.log(e.clientX);
           console.log(e.clientY);
 
-          startX = e.clientX;
-          startY = e.clientY;
+          const rect = canvas.getBoundingClientRect();
+          startX = e.clientX - rect.left;
+          startY = e.clientY - rect.top;
           clicked = true;
         })
 
         canvas.addEventListener("mousemove", (e)=> {
             if(clicked)
             {
-            const newx = e.clientX - startX;
-            const newy = e.clientY - startY;
-
-            //   ctx.clearRect(0, 0, canvas.width, canvas.height);
-            clearCanvas(existingShapes,ctx,canvas);
-            if(selectedTool=='rectangle')
-            {
-                ctx.strokeRect(startX,startY,newx,newy);
-            }
-            else if(selectedTool=='circle')
-            {
-                // ctx.strokeStyle = '#a12c21';
-            const radius = Math.sqrt(newx*newx + newy*newy);
-            ctx.beginPath();
-            ctx.arc(startX, startY,radius, 0, Math.PI * 2);
-            ctx.strokeStyle = "red";
-            ctx.lineWidth = 2;
-            ctx.stroke();
-            }
-            
+              const rect = canvas.getBoundingClientRect();
+              const currentX = e.clientX - rect.left;
+              const currentY = e.clientY - rect.top;
+              const width = currentX - startX;
+              const height = currentY - startY;
+              // ctx.clearRect(0, 0, canvas.width, canvas.height);
+              // ctx.fillStyle = "rgba(0, 0, 0)"
+              // ctx.fillRect(0, 0, canvas.width, canvas.height);
+              clearCanvas(existingShapes, ctx, canvas);
+              ctx.strokeStyle = "rgba(255, 255, 255)"
+              ctx.strokeRect(startX, startY, width, height);
             }
           
 
@@ -72,30 +77,27 @@ export async function initDraw(canvas:HTMLCanvasElement,selectedTool:Tool,roomId
 
         canvas.addEventListener("mouseup", (e) => {
             clicked = false
-          const newx = e.clientX - startX;
-          const newy = e.clientY - startY;
+            const rect = canvas.getBoundingClientRect();
+            const endX = e.clientX - rect.left;
+            const endY = e.clientY - rect.top;
+            const width = endX - startX;
+            const height = endY - startY;
+          const shape: Shape = {
+            type: "rectangle",
+            x: startX,
+            y: startY,
+            height:height,
+            width:width
+        }
+        existingShapes.push(shape);
 
-          if(selectedTool=="rectangle")
-          {
-            existingShapes.push({
-                type:"rectangle",
-                x:startX,
-                y:startY,
-                width:newx,
-                height:newy
-              })
-          }
-          else if(selectedTool=="circle")
-          {
-            const radius = Math.sqrt(newx * newx + newy * newy);
-            
-            existingShapes.push({
-                type:"circle",
-                x:startX,
-                y:startY,
-                radius:radius,
-              })
-          }
+        socket.send(JSON.stringify({
+            type: "chat",
+            message: JSON.stringify({
+                shape
+            }),
+            roomId
+        }))
 
         //   ctx.clearRect(0, 0, canvas.width, canvas.height);
         //   ctx.strokeRect(startX,startY,newx,newy);
@@ -112,30 +114,12 @@ function clearCanvas(existingShapes:Shape[],ctx:CanvasRenderingContext2D,canvas:
 // clear the canvas and render all the exising shapes
 ctx.clearRect(0,0,canvas.width,canvas.height);
 ctx.fillStyle = 'rgba(0,0,0)'
-ctx.fillRect(0,0,canvas.height,canvas.width);
+ctx.fillRect(0,0,canvas.width,canvas.height);
 existingShapes.map((shape) => {
-    if(shape.type=="rectangle")
-    {
-        ctx.strokeRect(shape.x,shape.y,shape.width,shape.height);
-        ctx.strokeStyle = "blue"
-    }
-    else if(shape.type=="circle")
-    {
-        //draw an arc , calculate the radius
-        // (x,y) -> (xn,yn), optional
-
-        // const radius = Math.sqrt(
-        //     Math.pow(shape.x - shape.startPos.x, 2) + Math.pow(y - startPos.y, 2)
-        //     );
-
-        ctx.beginPath();
-        ctx.arc(shape.x, shape.y, shape.radius, 0, Math.PI * 2);
-        ctx.strokeStyle = "red";
-        // ctx.fillStyle = "blue"; // set fill color
-        // ctx.fill(); // ✅ fills the circle
-        ctx.lineWidth = 2;
-        ctx.stroke();
-    }
+  if (shape.type === "rectangle") {
+      ctx.strokeStyle = "rgba(255, 255, 255)"
+      ctx.strokeRect(shape.x, shape.y, shape.width, shape.height);
+  }
 })
 }
 
@@ -148,7 +132,8 @@ async function getExistingShapes(roomId:string)
 
     const shapes = message.map((x:{message:string}) =>{
         const parsedmessage = JSON.parse(x.message)
-        return parsedmessage;
+        console.log("parsed message contains ", parsedmessage);
+        return parsedmessage.shape;
     })
     //
     return shapes;

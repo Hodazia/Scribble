@@ -4,25 +4,30 @@ import { useState,useEffect,useRef } from "react"
 import { initDraw } from "@/draw/Game";
 import { Tool } from "@/draw/type";
 import { Pencil,PenIcon, Circle,Eraser,MousePointer,Hand,RectangleHorizontal } from "lucide-react";
+import { WS_BACKEND } from "@/config";
 
-
-export default function Canvas({roomId}: {roomId: string}){
+export default function Canvas({roomId,socket}: {roomId: string,socket:WebSocket}){
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [selectedTool, setSelectedTool] = useState<Tool>('rectangle')
-
+    // const [socket,setsocket] = useState<WebSocket | null>(null)
 
     useEffect(() => {
       if(canvasRef.current)
       {
-       initDraw(canvasRef.current,selectedTool,roomId)
+       initDraw(canvasRef.current,selectedTool,roomId,socket)
       }
         
     }, [canvasRef,selectedTool])
 
+    if(!socket)
+    {
+        return <div>Connecting to server</div>
+    }
+
     return <div>
       <canvas
       ref={canvasRef}
-      width={1000} height={1000}
+      width={1200} height={1200}
       style={{ backgroundColor: 'black'}}/>
       <div className="absolute flex m-2 top-0 left-1/4 gap-1 border-1 border-gray-400 rounded-2xl p-2 text-white">
         <button 

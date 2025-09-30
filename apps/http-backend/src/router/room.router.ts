@@ -11,6 +11,7 @@ router.get("/chats/:roomId", async (
     res: Response
   ) => {
     const roomId = Number(req.params.roomId);
+    console.log(req.params.roomId);
     if (Number.isNaN(roomId)) {
       return res.status(400).send("Invalid roomId");
     }
@@ -42,9 +43,8 @@ router.get("/chats/:roomId", async (
     }
 ]
                 */
-              const chats = await prismaclient.chat.findMany({
-                //@ts-ignore
-                  where: { roomId },
+              const messages = await prismaclient.chat.findMany({
+                  where: { roomId:roomId },
                   orderBy: { id: "desc" },
                   take: 50,
               });
@@ -53,9 +53,14 @@ router.get("/chats/:roomId", async (
             //     orderBy: { id: "desc" },
             //     take: 50,
             // });
-              res.json(chats);
+              res.json({
+                messages
+            });
           } catch (e) {
-              res.status(500).send("Failed to fetch chats");
+                console.log(e);
+                res.json({
+                    messages: []
+                })
           }
       })();})
 

@@ -4,6 +4,7 @@
 // canvas is white by default
 
 import Canvas from "@/component/Canvas";
+import { RoomCanvas } from "@/component/RoomCanvas";
 
 /*
 this component extracts the roomId from the params and passes it to the RoomCanvas
@@ -36,6 +37,6 @@ export default async function CanvasPage({
   
 
     return <div>
-      <Canvas roomId={roomId}/>
+      <RoomCanvas roomId={roomId}/>
     </div>
 }
