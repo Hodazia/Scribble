@@ -11,13 +11,19 @@ export default function Canvas({roomId,socket}: {roomId: string,socket:WebSocket
     const [selectedTool, setSelectedTool] = useState<Tool>('rectangle')
     // const [socket,setsocket] = useState<WebSocket | null>(null)
 
+      // This ref is read by the drawing engine, so we don't have to re-init
+    const toolRef = useRef<Tool>("rectangle");
+    useEffect(() => {
+        toolRef.current = selectedTool;
+    }, [selectedTool]);
+
     useEffect(() => {
       if(canvasRef.current)
       {
-       initDraw(canvasRef.current,selectedTool,roomId,socket)
+       initDraw(canvasRef.current,toolRef,roomId,socket)
       }
         
-    }, [canvasRef,selectedTool])
+    }, [canvasRef,roomId,socket])
 
     if(!socket)
     {
@@ -28,7 +34,7 @@ export default function Canvas({roomId,socket}: {roomId: string,socket:WebSocket
       <canvas
       ref={canvasRef}
       width={1200} height={1200}
-      style={{ backgroundColor: 'black'}}/>
+      style={{ backgroundColor: 'pink'}}/>
       <div className="absolute flex m-2 top-0 left-1/4 gap-1 border-1 border-gray-400 rounded-2xl p-2 text-white">
         <button 
             onClick={() => setSelectedTool("hand")}

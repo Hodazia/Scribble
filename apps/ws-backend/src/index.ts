@@ -116,7 +116,20 @@ wss.on("connection", function connection(ws: WebSocket, request) {
                             );
                         }
                     });
-                } else {
+                }
+                else if (parsedMessage.action === "delete") {
+                    await prismaclient.chat.delete({ where: { id: parsedMessage.id } });
+                    users.forEach((user) => {
+                      if (user.ws !== ws && user.rooms.includes(roomId)) {
+                        user.ws.send(JSON.stringify({
+                          type: "chat",
+                          message: JSON.stringify({ id: parsedMessage.id, action: "delete" }),
+                          roomId,
+                        }));
+                      }
+                    });
+                }
+                else {
                     const chat = await prismaclient.chat.create({
                         data: {
                             roomId: Number(roomId),
