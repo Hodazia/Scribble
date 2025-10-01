@@ -25,25 +25,19 @@ const steps = [
 
 const HowItWorks = () => {
   return (
-    <section className="py-24 bg-background">
-      <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl lg:text-5xl font-bold mb-6">
-            Simple as{" "}
-            <span className="bg-gradient-primary bg-clip-text text-transparent">
-              1, 2, 3
-            </span>
-          </h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Get started in minutes. No complex setup, no learning curve. Just pure collaboration.
-          </p>
-        </motion.div>
+    <section className="relative z-10 py-24 text-indigo-200 ">
+      <div className=" mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl lg:text-5xl font-extrabold">
+              Simple as {" "}
+              <span className="text-indigo-400">1, 2, 3</span>
+            </h2>
+            <p className="mt-4 text-lg lg:text-2xl text-indigo-200
+             max-w-2xl mx-auto">
+              Get started in minutes. No complex setup, no learning curve. 
+              Just pure collaboration.
+            </p>
+          </div>
 
         <div className="max-w-5xl mx-auto">
           <div className="grid lg:grid-cols-3 gap-12 lg:gap-8">
@@ -62,12 +56,12 @@ const HowItWorks = () => {
               >
                 {/* Connection Line */}
                 {index < steps.length - 1 && (
-                  <div className="hidden lg:block absolute top-16 left-full w-full h-px bg-gradient-to-r from-primary/30 to-transparent z-0" />
+                  <div className="hidden lg:block absolute top-16 left-full w-full h-px bg-gradient-to-r from-indigo-400/30 to-transparent z-0" />
                 )}
                 
                 <div className="relative z-10 text-center">
                   {/* Step Number */}
-                  <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-primary rounded-full text-white font-bold text-xl mb-6 shadow-lg group-hover:shadow-glow transition-all duration-300">
+                  <div className="inline-flex items-center justify-center w-20 h-20 rounded-full text-white font-bold text-xl mb-6 shadow-lg transition-all duration-300 bg-indigo-700/60 ring-1 ring-indigo-400/30">
                     {step.step}
                   </div>
                   
@@ -75,13 +69,13 @@ const HowItWorks = () => {
                   <motion.div
                     whileHover={{ scale: 1.1 }}
                     transition={{ type: "spring", stiffness: 300 }}
-                    className="inline-flex items-center justify-center w-16 h-16 bg-surface border border-border rounded-xl mb-6 group-hover:border-primary/30 transition-all duration-300"
+                    className="inline-flex items-center justify-center w-16 h-16 rounded-xl mb-6 border border-white/10 bg-white/5 group-hover:border-white/20 transition-all duration-300"
                   >
-                    <step.icon className="w-8 h-8 text-primary" />
+                    <step.icon className="w-8 h-8 text-cyan-300" />
                   </motion.div>
                   
-                  <h3 className="text-2xl font-semibold mb-4">{step.title}</h3>
-                  <p className="text-muted-foreground leading-relaxed max-w-sm mx-auto">
+                  <h3 className="text-2xl font-semibold mb-4 text-indigo-300">{step.title}</h3>
+                  <p className="text-indigo-200 leading-relaxed max-w-sm mx-auto">
                     {step.description}
                   </p>
                 </div>
@@ -90,18 +84,12 @@ const HowItWorks = () => {
           </div>
           
           {/* Call to Action */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-            className="text-center mt-16"
-          >
-            <div className="inline-flex items-center gap-2 text-sm text-muted-foreground mb-4">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              Ready in under 30 seconds
+            <div className="mt-16 flex justify-center">
+              <div className="inline-flex items-center gap-3 text-sm lg:text-base text-indigo-200">
+                <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse" />
+                Ready in under 30 minutes
+              </div>
             </div>
-          </motion.div>
         </div>
       </div>
     </section>

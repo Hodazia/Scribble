@@ -3,13 +3,22 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
 
+
+import { useRouter } from "next/navigation";
+import { Playfair_Display } from "next/font/google";
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
 const CallToAction = () => {
+  const router = useRouter();
   return (
-    <section className="py-24 bg-gradient-hero relative overflow-hidden">
+    <section className="py-24 relative overflow-hidden">
       {/* Background Elements */}
       <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-white/5 rounded-full blur-2xl" />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full blur-3xl bg-fuchsia-500/10" />
+        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full blur-2xl bg-cyan-400/10" />
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
@@ -35,11 +44,12 @@ const CallToAction = () => {
             <Sparkles className="w-16 h-16 text-white/80" />
           </motion.div>
           
-          <h2 className="text-4xl lg:text-6xl font-bold text-black mb-6">
+          <h2 className={`text-4xl lg:text-6xl font-extrabold 
+          text-white mb-6 drop-shadow-[0_0_30px_rgba(168,85,247,0.25)] ${playfair.className}`}>
             Ready to draw together?
           </h2>
           
-          <p className="text-xl lg:text-2xl text-black/80 mb-12 leading-relaxed">
+          <p className="text-xl lg:text-2xl text-indigo-200 mb-12 leading-relaxed">
             Join thousands of teams already collaborating visually. 
             Start creating together in under 30 seconds.
           </p>
@@ -54,32 +64,20 @@ const CallToAction = () => {
             <Button 
               variant="default" 
               size="lg"
-              className="bg-white text-black hover:bg-white/90 border-white group"
+              className="text-white shadow-[0_0_24px_rgba(34,211,238,0.25)] 
+              bg-indigo-600 text-white hover:bg-white hover:text-indigo-600
+              group"
+              onClick={()=>{
+                router.push("/auth/signin")
+              }}
             >
               Get Started for Free
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Button>
             
-            <Button 
-              variant="ghost" 
-              size="lg"
-              className="text-black hover:bg-white/10 border border-white/20"
-            >
-              Schedule a Demo
-            </Button>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-            className="flex items-center justify-center gap-8 mt-12 text-black text-sm"
-          >
-            <span>✨ No credit card required</span>
-            <span>🚀 Setup in 30 seconds</span>
-            <span>💝 14-day free trial</span>
-          </motion.div>
+
         </motion.div>
       </div>
     </section>

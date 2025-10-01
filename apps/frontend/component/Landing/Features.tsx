@@ -37,11 +37,11 @@ const features = [
 
 const Features = () => {
   return (
-    <section className="py-24 bg-surface relative overflow-hidden">
+    <section className="py-24 relative overflow-hidden">
       {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-40">
-        <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-primary/5 rounded-full blur-xl" />
-        <div className="absolute bottom-1/4 right-1/3 w-48 h-48 bg-secondary/5 rounded-full blur-2xl" />
+      <div className="absolute inset-0 opacity-30">
+        <div className="absolute top-1/4 left-1/4 w-32 h-32 rounded-full blur-xl bg-fuchsia-500/10" />
+        <div className="absolute bottom-1/4 right-1/3 w-48 h-48 rounded-full blur-2xl bg-cyan-400/10" />
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
@@ -52,13 +52,13 @@ const Features = () => {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl lg:text-5xl font-bold mb-6">
+          <h2 className="text-4xl lg:text-5xl font-extrabold mb-6 text-indigo-100">
             Everything you need to{" "}
-            <span className="bg-gradient-primary bg-clip-text text-transparent">
+            <span className="">
               collaborate
             </span>
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-xl text-indigo-200 max-w-3xl mx-auto">
             Powerful features designed for modern teams. From real-time drawing to secure collaboration, 
             we've got everything covered.
           </p>
@@ -82,13 +82,14 @@ const Features = () => {
               }}
               className="group"
             >
-              <div className="bg-card border border-border rounded-xl p-8 h-full shadow-md hover:shadow-lg transition-all duration-300 hover:border-primary/20">
+              <div className="rounded-2xl p-8 h-full bg-white/5 border border-white/10 shadow-[0_0_24px_rgba(2,132,199,0.15)] hover:shadow-[0_0_28px_rgba(236,72,153,0.25)] transition-all duration-300">
                 <div className="mb-6">
-                  <div className="w-12 h-12 bg-gradient-primary rounded-lg flex items-center justify-center mb-4 group-hover:shadow-glow transition-all duration-300">
+                  <div className="w-12 h-12 rounded-lg flex items-center justify-center mb-4
+                   ">
                     <feature.icon className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
-                  <p className="text-muted-foreground leading-relaxed">
+                  <h3 className="text-xl text-indigo-400 mb-3">{feature.title}</h3>
+                  <p className="text-indigo-200 leading-relaxed">
                     {feature.description}
                   </p>
                 </div>

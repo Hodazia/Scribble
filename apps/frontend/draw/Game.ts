@@ -203,6 +203,7 @@ export function initDraw(
   let lastPanX = 0, lastPanY = 0;
   let hoverId: number | null = null;
   let selectedId: number | null = null;
+  let currentPoints: { x: number; y: number }[] = [];
 
   // -------- helpers
   const worldToScreen = (x: number, y: number) => [x + panX, y + panY];
@@ -245,6 +246,23 @@ export function initDraw(
       ctx.moveTo(x1, y1);
       ctx.lineTo(x2, y2);
       ctx.stroke();
+    }else if (shape.type === "pencil") {
+      ctx.beginPath();
+      const pts = shape.points;
+      if (pts.length > 1) {
+        const [sx, sy] = worldToScreen(pts[0].x, pts[0].y);
+        ctx.moveTo(sx, sy);
+        for (let i = 1; i < pts.length; i++) {
+          const [px, py] = worldToScreen(pts[i].x, pts[i].y);
+          ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+      }
+    } else if (shape.type === "text") {
+      const [sx, sy] = worldToScreen(shape.x, shape.y);
+      ctx.font = `${shape.fontSize || 20}px Inter, sans-serif`;
+      ctx.fillStyle = shape.color || "#fff";
+      ctx.fillText(shape.text, sx, sy);
     }
     if (highlight) ctx.restore();
     ctx.closePath();
@@ -318,6 +336,36 @@ export function initDraw(
     [startX, startY] = screenToWorld(sx, sy);
     [lastPanX, lastPanY] = [sx, sy];
 
+
+    if (tool === "pencil") {
+      currentPoints = [{ x: startX, y: startY }];
+    }
+
+    if (tool === "text") {
+      // prompt user for text entry
+      const userText = prompt("Enter text:");
+      if (userText && userText.trim()) {
+        const newShape: Shape = {
+          type: "text",
+          x: startX,
+          y: startY,
+          text: userText.trim(),
+          fontSize: 22,
+          color: "#fff"
+        };
+        const tempId = -Date.now();
+        shapes.push({ id: tempId, shape: newShape });
+        drawAll();
+        socket.send(JSON.stringify({
+          type: "chat",
+          roomId,
+          message: JSON.stringify({ action: "create", shape: newShape })
+        }));
+      }
+      isDown = false;
+      return;
+    }
+
     if (tool === "select" || tool === "eraser") {
       selectedId = hitTest(sx, sy);
       drawAll();
@@ -352,6 +400,15 @@ export function initDraw(
     }
 
     if (!isDown) return;
+
+
+    if (tool === "pencil") {
+      const [wx, wy] = screenToWorld(sx, sy);
+      currentPoints.push({ x: wx, y: wy });
+      const preview: Shape = { type: "pencil", points: currentPoints };
+      drawAll(preview);
+      return;
+    }
 
     if (tool === "hand") {
       // panning is performed in screen space
@@ -430,6 +487,22 @@ export function initDraw(
     const tempId = Date.now(); // temporary ID
     shapes.push({ id: tempId, shape: newShape });
     drawAll();
+
+    if (tool === "pencil") {
+      if (currentPoints.length < 2) return;
+      const newShape: Shape = { type: "pencil", points: currentPoints };
+      const tempId = -Date.now();
+      shapes.push({ id: tempId, shape: newShape });
+      drawAll();
+      socket.send(JSON.stringify({
+        type: "chat",
+        roomId,
+        message: JSON.stringify({ action: "create", shape: newShape })
+      }));
+      currentPoints = [];
+      return;
+    }
+    
 
     // persist
     socket.send(JSON.stringify({

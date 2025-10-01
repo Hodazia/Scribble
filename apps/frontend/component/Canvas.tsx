@@ -3,7 +3,7 @@
 import { useState,useEffect,useRef } from "react"
 import { initDraw } from "@/draw/Game";
 import { Tool } from "@/draw/type";
-import { Pencil,PenIcon, Circle,Eraser,MousePointer,Hand,RectangleHorizontal } from "lucide-react";
+import { Pencil,PenIcon, Minus, Circle,Eraser,MousePointer,Hand,RectangleHorizontal,TypeOutline } from "lucide-react";
 import { WS_BACKEND } from "@/config";
 
 export default function Canvas({roomId,socket}: {roomId: string,socket:WebSocket}){
@@ -70,7 +70,20 @@ export default function Canvas({roomId,socket}: {roomId: string,socket:WebSocket
             onClick={() => setSelectedTool("line")}
             className={selectedTool === "line" ? "bg-zinc-600 text-red-400 p-2 rounded-xl cursor-pointer" : "hover:bg-zinc-600 p-2 rounded-xl cursor-pointer"}
         >
-            <PenIcon />
+            <Minus />
+        </button>
+        <button
+        onClick={() => setSelectedTool("pencil")}
+        className={selectedTool === "pencil" ? "bg-zinc-600 text-red-400 p-2 rounded-xl" : "hover:bg-zinc-600 p-2 rounded-xl"}
+        >
+        <Pencil /> {/* or any freehand icon */}
+        </button>
+
+        <button
+        onClick={() => setSelectedTool("text")}
+        className={selectedTool === "text" ? "bg-zinc-600 text-red-400 p-2 rounded-xl" : "hover:bg-zinc-600 p-2 rounded-xl"}
+        >
+        <TypeOutline />
         </button>
     </div>
     </div>

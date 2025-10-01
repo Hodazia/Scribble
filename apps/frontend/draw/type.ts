@@ -22,6 +22,20 @@ export type Shape =
           y2: number;
           clientId?: string;
       }
+      | {
+        type: "pencil";
+        points: { x: number; y: number }[];
+        clientId?: string;
+      }
+    | {
+        type: "text";
+        x: number;
+        y: number;
+        text: string;
+        fontSize?: number;
+        color?: string;
+        clientId?: string;
+      }
     | {
           type: "select";
       };
@@ -32,4 +46,6 @@ export type Tool =
     | "line"
     | "hand"
     | "select"
-    | "eraser";
+    | "eraser"
+    | "pencil"
+    | "text";

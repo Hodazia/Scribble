@@ -4,16 +4,20 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Play } from "lucide-react";
 // import heroImage from "@/assets/hero-canvas.jpg";
 import Image from "next/image";
+import { Playfair_Display } from "next/font/google";
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
 
 const Hero = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-subtle">
+    <section className="relative min-h-screen w-full flex
+     items-center justify-center overflow-hidden">
       {/* Background Elements */}
-      <div className="absolute inset-0 bg-gradient-hero opacity-5" />
-      <div className="absolute top-20 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-20 right-1/4 w-64 h-64 bg-secondary/10 rounded-full blur-2xl" />
+
       
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="container mx-auto px-4 relative z-10" >
         <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
           {/* Content */}
           <motion.div
@@ -28,16 +32,17 @@ const Hero = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="space-y-4"
             >
-              <h1 className="text-5xl lg:text-7xl font-bold leading-tight">
+              <h1
+              className={`text-5xl lg:text-7xl font-extrabold text-indigo-100 tracking-tight ${playfair.className}`}>
                 Collaborate{" "}
-                <span className="bg-gradient-primary bg-clip-text text-transparent">
+                <span className="">
                   Visually.
                 </span>
                 <br />
                 Create Together.
               </h1>
               
-              <p className="text-xl lg:text-2xl text-muted-foreground leading-relaxed max-w-2xl">
+              <p className="text-xl lg:text-2xl text-slate-300 leading-relaxed max-w-2xl">
                 A real-time collaborative canvas for teams to sketch, ideate, and design together — anywhere.
               </p>
             </motion.div>
@@ -48,12 +53,16 @@ const Hero = () => {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
             >
-              <Button variant="default" size="lg" className="group">
+              <Button size="lg" className="group  
+              bg-indigo-700 text-white hover:bg-white
+              hover:text-indigo-600">
                 Start Drawing
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
               
-              <Button variant="default" size="lg" className="group">
+              <Button className="group 
+              bg-indigo-700 text-white hover:bg-white
+              hover:text-indigo-600 border border-white/10">
                 <Play className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 Try Live Demo
               </Button>
@@ -63,11 +72,9 @@ const Hero = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.6 }}
-              className="flex items-center gap-8 justify-center lg:justify-start text-sm text-muted-foreground"
+              className="flex items-center gap-8 justify-center 
+              lg:justify-start text-sm text-muted-foreground"
             >
-              <span className="flex items-center gap-2">
-                ✨ No signup required
-              </span>
               <span className="flex items-center gap-2">
                 🚀 Instant collaboration
               </span>
@@ -81,7 +88,7 @@ const Hero = () => {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="relative"
           >
-            <div className="relative rounded-xl overflow-hidden shadow-xl hover:shadow-glow transition-all duration-500">
+            <div className="relative rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(2,132,199,0.15)] ring-1 ring-white/10 hover:ring-white/20 transition-all duration-500">
               {/* <Image
                 src={""}
                 alt="CollabCanvas collaborative whiteboard in action"
@@ -101,7 +108,7 @@ const Hero = () => {
                   repeat: Infinity,
                   ease: "easeInOut"
                 }}
-                className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg"
+                className="absolute top-4 right-4 bg-black/40 text-white backdrop-blur-sm rounded-lg p-3 shadow-[0_0_20px_rgba(168,85,247,0.25)] border border-white/10"
               >
                 <div className="flex items-center gap-2 text-sm font-medium">
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
@@ -120,7 +127,7 @@ const Hero = () => {
                   ease: "easeInOut",
                   delay: 2
                 }}
-                className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg"
+                className="absolute bottom-4 left-4 bg-black/40 text-white backdrop-blur-sm rounded-lg p-3 shadow-[0_0_20px_rgba(59,130,246,0.25)] border border-white/10"
               >
                 <div className="flex items-center gap-2 text-sm font-medium">
                   <div className="w-2 h-2 bg-blue-500 rounded-full" />
