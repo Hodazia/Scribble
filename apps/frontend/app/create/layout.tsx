@@ -1,12 +1,12 @@
-'use client'
+import { ReactNode } from "react"
 
-import { AuthPage } from "@/component/auth/Authpage";
-export default function Signin() {
+
+export default function Authlayout({children}:{children:React.ReactNode}) {
     return (
         <>
-         {/* <div className="min-h-screen w-full bg-[#020617] relative"> */}
+        <div className="min-h-screen w-full bg-[#020617] relative">
   {/* Magenta Orb Grid Background */}
-            {/* <div
+            <div
             className="absolute inset-0 z-0"
             style={{
             background: "#020617",
@@ -19,11 +19,9 @@ export default function Signin() {
             }}
         />
                 <div className="relative">
-                <AuthPage isSignin={true} />
+                    {children}
                 </div>
-        </div> */}
-        <AuthPage isSignin={true}/>
+        </div>
         </>
     )
-
 }

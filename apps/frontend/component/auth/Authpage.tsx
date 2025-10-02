@@ -3,7 +3,15 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { HTTP_BACKEND } from "@/config";
+import { HTTP_BACKEND } from "@/config"
+import { Inter } from "next/font/google";
+
+
+const inter = Inter({
+  subsets: ["latin"], 
+  weight: ["400"], // Optional: pick the weights you need
+  display: "swap",
+});
 
 export function AuthPage({ isSignin }: { isSignin: boolean }) {
   const router = useRouter();
@@ -55,9 +63,10 @@ export function AuthPage({ isSignin }: { isSignin: boolean }) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen w-screen bg-white">
-      <div className="bg-blue-300 p-6 text-white rounded-3xl shadow-lg w-full max-w-sm">
-        <h2 className="text-2xl font-bold text-center mb-6">
+    <div className="flex flex-col items-center justify-center h-screen w-screen ">
+      <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl
+       shadow-2xl p-8 w-full max-w-sm">
+        <h2 className={`text-2xl font-bold text-center text-indigo-300 mb-6 ${inter.className}`}>
           {isSignin ? "Sign In" : "Sign Up"}
         </h2>
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
@@ -96,7 +105,10 @@ export function AuthPage({ isSignin }: { isSignin: boolean }) {
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className="w-full mt-8 bg-blue-500 text-white py-3 rounded-3xl hover:bg-blue-600 transition disabled:opacity-50"
+          className="w-full mt-8 bg-blue-500 text-white py-3 
+          rounded-3xl hover:bg-blue-600 
+          bg-indigo-600 hover:bg-indigo-700
+          transition disabled:opacity-50"
         >
           {loading ? "Loading..." : isSignin ? "Sign In" : "Sign Up"}
         </button>
@@ -104,7 +116,7 @@ export function AuthPage({ isSignin }: { isSignin: boolean }) {
           {isSignin ? "New user?" : "Already have an account?"}{" "}
           <Link
             href={isSignin ? "/auth/signup" : "/auth/signin"}
-            className="text-blue-500 hover:underline"
+            className="text-indigo-400 hover:text-indigo-300 hover:underline"
           >
             {isSignin ? "Sign up" : "Sign in"}
           </Link>

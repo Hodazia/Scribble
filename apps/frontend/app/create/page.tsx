@@ -1,3 +1,5 @@
+// 
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -11,7 +13,6 @@ interface Room {
   slug: string;
   admin: { name: string };
 }
-
 
 export default function Create() {
   const router = useRouter();
@@ -32,10 +33,9 @@ export default function Create() {
 
     const fetchRooms = async () => {
       try {
-        // fetch all rooms
         const response = await fetch(`${HTTP_BACKEND}/api/v1/rooms/get-rooms`, {
           headers: {
-            Authorization: `Bearer ${token}`, // Use Bearer prefix
+            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -68,12 +68,11 @@ export default function Create() {
     }
 
     try {
-        // creating  a room
       const response = await fetch(`${HTTP_BACKEND}/api/v1/rooms/create-room`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Use Bearer prefix
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ name: newRoomName }),
       });
@@ -103,44 +102,65 @@ export default function Create() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
+      <div className="min-h-screen flex items-center justify-center text-indigo-200">
         Loading rooms...
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white text-black p-6">
+    <div className="min-h-screen p-6 text-white">
+      {/* Header */}
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Lobby</h1>
+        <h1 className="text-4xl font-extrabold tracking-tight text-white">Rooms</h1>
+
+        {/* Floating Action Buttons */}
         <div className="flex gap-4">
+          {/* Create Room Button */}
           <button
             onClick={() => setShowCreateModal(true)}
-            className="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center hover:bg-blue-600 transition"
+            title="Create new room"
+            className="w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center 
+              text-white shadow-md shadow-indigo-500/30 
+              hover:bg-white hover:text-indigo-600 transition transform hover:scale-110"
           >
             <FaPlus size={20} />
           </button>
+
+          {/* Sign Out Button */}
           <button
             onClick={handleSignOut}
-            className="w-12 h-12 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition"
+            title="Sign out"
+            className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center 
+              text-white shadow-md shadow-red-500/30 
+              hover:bg-white hover:text-red-600 transition transform hover:scale-110"
           >
             <FaSignOutAlt size={20} />
           </button>
         </div>
       </div>
 
+      {/* Subheader */}
+      <div className="text-center text-indigo-300 text-lg mb-6">
+        Create or join the rooms!
+      </div>
+
+      {/* Create Room Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-sm">
-            <h2 className="text-2xl font-bold text-white mb-4 text-center">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-slate-800 p-6 rounded-2xl shadow-xl w-full max-w-sm border border-indigo-500/20">
+            <h2 className="text-2xl font-bold text-indigo-400 mb-4 text-center">
               Create a Room
             </h2>
             {createError && (
-              <p className="text-red-500 mb-4 text-center">{createError}</p>
+              <p className="text-red-400 mb-4 text-center">{createError}</p>
             )}
             <form onSubmit={handleCreateRoom}>
               <div className="mb-4">
-                <label className="block text-gray-400 mb-2" htmlFor="roomName">
+                <label
+                  className="block text-indigo-300 mb-2 font-medium"
+                  htmlFor="roomName"
+                >
                   Room Name
                 </label>
                 <input
@@ -148,7 +168,8 @@ export default function Create() {
                   id="roomName"
                   value={newRoomName}
                   onChange={(e) => setNewRoomName(e.target.value)}
-                  className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 bg-slate-900 border border-indigo-500/30 text-white rounded-lg 
+                    focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   required
                 />
               </div>
@@ -156,14 +177,15 @@ export default function Create() {
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition"
+                  className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={createLoading}
-                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition disabled:opacity-50"
+                  className="px-4 py-2 bg-indigo-500 text-white font-medium rounded-lg 
+                    hover:bg-indigo-600 transition disabled:opacity-50"
                 >
                   {createLoading ? "Creating..." : "Create"}
                 </button>
@@ -173,20 +195,46 @@ export default function Create() {
         </div>
       )}
 
-      {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+      {/* Error Handling */}
+      {error && <p className="text-red-400 text-center mb-4">{error}</p>}
+
+      {/* Empty State */}
       {rooms.length === 0 ? (
-        <p className="text-center text-gray-400">
-          No rooms available. Create one to get started!
-        </p>
+        <div className="flex flex-col items-center justify-center text-center py-20">
+          <p className="text-indigo-300 text-lg mb-4">
+            No rooms yet — create one to start collaborating!
+          </p>
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="px-5 py-2.5 bg-indigo-600 rounded-lg text-white font-medium 
+              hover:bg-indigo-700 transition shadow-md shadow-indigo-500/30"
+          >
+            Create Room
+          </button>
+        </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div
+          className="
+          grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 
+          mt-6
+          "
+        >
           {rooms.map((room) => (
-            <RoomCard
+            <div
               key={room.id}
-              roomId={room.id}
-              slug={room.slug}
-              adminName={room.admin.name}
-            />
+              className="
+                bg-white/10 backdrop-blur-md 
+                rounded-2xl p-4 shadow-md border border-white/10 
+                hover:shadow-indigo-500/30 transition duration-300 
+                hover:-translate-y-1 hover:scale-[1.02]
+              "
+            >
+              <RoomCard
+                roomId={room.id}
+                slug={room.slug}
+                adminName={room.admin.name}
+              />
+            </div>
           ))}
         </div>
       )}
