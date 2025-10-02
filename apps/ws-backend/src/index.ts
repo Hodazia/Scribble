@@ -1,7 +1,7 @@
 import { WebSocketServer, WebSocket } from "ws";
 import   { JWT_SECRET } from "@repo/backend-common/config";
 import jwt from "jsonwebtoken";
-import  { prismaclient } from "@repo/db/client"
+import { prismaclient } from "@repo/db/client";
 import { parse } from "url"
 
 
@@ -74,6 +74,39 @@ wss.on("connection", function connection(ws: WebSocket, request) {
                 user.rooms = user.rooms.filter((x) => x !== parsedData.roomId);
             }
 
+            if (parsedData.type === "user_chat") {
+                const { roomId, payload } = parsedData;
+                if (!roomId || !payload?.content) return;
+              
+                const msg = await prismaclient.messages.create({
+                  data: {
+                    roomId: Number(roomId),
+                    userId,
+                    content: payload.content,
+                  },
+                  include: {
+                    user: { select: { name: true, image: true } },
+                  },
+                });
+              
+                users.forEach((user) => {
+                  if (user.rooms.includes(roomId)) {
+                    user.ws.send(
+                      JSON.stringify({
+                        type: "user_chat",
+                        payload: { 
+                            id: msg.id, 
+                            content: msg.content, 
+                            userId:msg.userId,
+                            user:msg.user,
+                            createdAt:msg.createdAt },
+                        roomId,
+                      })
+                    );
+                  }
+                });
+              }
+            
             if (parsedData.type === "chat") {
                 const roomId = parsedData.roomId;
                 const message = parsedData.message;
@@ -101,33 +134,24 @@ wss.on("connection", function connection(ws: WebSocket, request) {
                         },
                     });
 
-                    users.forEach((user) => {
-                        if (user.ws !== ws && user.rooms.includes(roomId)) {
-                            user.ws.send(
-                                JSON.stringify({
-                                    type: "chat",
-                                    message: JSON.stringify({
-                                        shape: parsedMessage.shape,
-                                        id: parsedMessage.id,
-                                        action: "update",
-                                    }),
-                                    roomId,
-                                })
-                            );
-                        }
-                    });
+                    // users.forEach((user) => {
+                    //     if (user.ws !== ws && user.rooms.includes(roomId)) {
+                    //         user.ws.send(
+                    //             JSON.stringify({
+                    //                 type: "chat",
+                    //                 message: JSON.stringify({
+                    //                     shape: parsedMessage.shape,
+                    //                     id: parsedMessage.id,
+                    //                     action: "update",
+                    //                 }),
+                    //                 roomId,
+                    //             })
+                    //         );
+                    //     }
+                    // });
                 }
                 else if (parsedMessage.action === "delete") {
                     await prismaclient.chat.delete({ where: { id: parsedMessage.id } });
-                    users.forEach((user) => {
-                      if (user.ws !== ws && user.rooms.includes(roomId)) {
-                        user.ws.send(JSON.stringify({
-                          type: "chat",
-                          message: JSON.stringify({ id: parsedMessage.id, action: "delete" }),
-                          roomId,
-                        }));
-                      }
-                    });
                 }
                 else {
                     const chat = await prismaclient.chat.create({

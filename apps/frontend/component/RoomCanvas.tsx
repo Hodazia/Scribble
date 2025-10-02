@@ -5,6 +5,7 @@ import { initDraw } from "@/draw/Game";
 import { useEffect, useRef, useState } from "react";
 import Canvas from "./Canvas";
 import { useRouter } from "next/navigation";
+import Chat from "./Chat";
 
 export function RoomCanvas({roomId}: {roomId: string}) {
     const [socket, setSocket] = useState<WebSocket | null>(null);
@@ -38,5 +39,6 @@ export function RoomCanvas({roomId}: {roomId: string}) {
 
     return <div>
         <Canvas roomId={roomId} socket={socket} />
+        <Chat roomId={roomId} socket={socket}/>
     </div>
 }
