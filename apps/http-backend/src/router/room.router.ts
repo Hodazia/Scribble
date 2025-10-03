@@ -157,5 +157,12 @@ router.get("/messages/:roomId", protectedRoute,async (req:Request,res:Response) 
     }
     
 })
+/*
+one route to store the copied and pasted images in the cloudinary!
+once stored in the cloudinary , get back its file url in the response
 
+POST /rooms/uploadimage
+
+
+*/
 export default router;

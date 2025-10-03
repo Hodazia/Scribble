@@ -3,7 +3,7 @@
 import { useState,useEffect,useRef } from "react"
 import { initDraw } from "@/draw/Game";
 import { Tool } from "@/draw/type";
-import { Pencil,PenIcon, Minus, Circle,Eraser,MousePointer,Hand,RectangleHorizontal,TypeOutline } from "lucide-react";
+import { Pencil,PenIcon,Clipboard, Minus, Circle,Eraser,MousePointer,Hand,RectangleHorizontal,TypeOutline } from "lucide-react";
 import { WS_BACKEND } from "@/config";
 
 export default function Canvas({roomId,socket}: {roomId: string,socket:WebSocket}){
@@ -103,6 +103,12 @@ export default function Canvas({roomId,socket}: {roomId: string,socket:WebSocket
         >
         <TypeOutline />
         </button> */}
+        <button
+        onClick={() => setSelectedTool("paste")}
+        className={selectedTool === "paste" ? "bg-zinc-600 text-red-400 p-2 rounded-xl" : "hover:bg-zinc-600 p-2 rounded-xl"}
+        >
+        <Clipboard />
+        </button>
     </div>
     </div>
 }

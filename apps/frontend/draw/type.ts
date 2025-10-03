@@ -36,6 +36,14 @@ export type Shape =
         color?: string;
         clientId?: string;
       }
+      | {
+        type: "image";
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+        src: string;
+      }
     | {
           type: "select";
       };
@@ -48,4 +56,5 @@ export type Tool =
     | "select"
     | "eraser"
     | "pencil"
-    | "text";
+    | "text"
+    | "paste"; 
