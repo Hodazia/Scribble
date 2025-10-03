@@ -3,6 +3,7 @@ import { protectedRoute } from "../middleware/auth.middleware";
 import { prismaclient } from "@repo/db/client";
 import { Request,Response } from "express";
 import { handleCreateRoom } from "../controller/room.controller";
+
 const router: Router = express.Router();
 
 router.post("/create-room", protectedRoute, handleCreateRoom);
