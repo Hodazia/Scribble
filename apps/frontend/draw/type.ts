@@ -5,6 +5,7 @@ export type Shape =
           y: number;
           width: number;
           height: number;
+          color?: string;
           clientId?: string;
       }
     | {
@@ -12,6 +13,7 @@ export type Shape =
           x: number;
           y: number;
           radius: number;
+          color?: string;
           clientId?: string;
       }
     | {
@@ -20,11 +22,13 @@ export type Shape =
           y1: number;
           x2: number;
           y2: number;
+          color?: string;
           clientId?: string;
       }
       | {
         type: "pencil";
         points: { x: number; y: number }[];
+        color?: string;
         clientId?: string;
       }
     | {

@@ -9,6 +9,7 @@ import { WS_BACKEND } from "@/config";
 export default function Canvas({roomId,socket}: {roomId: string,socket:WebSocket}){
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [selectedTool, setSelectedTool] = useState<Tool>('rectangle')
+    const selectedColorRef = useRef<string>("#ffffff"); // default color white
     // const [socket,setsocket] = useState<WebSocket | null>(null)
 
       // This ref is read by the drawing engine, so we don't have to re-init
@@ -22,7 +23,7 @@ export default function Canvas({roomId,socket}: {roomId: string,socket:WebSocket
           if (canvasRef.current) {
             canvasRef.current.width = window.innerWidth;
             canvasRef.current.height = window.innerHeight;
-            initDraw(canvasRef.current, toolRef, roomId, socket);
+            initDraw(canvasRef.current, toolRef, selectedColorRef,  roomId, socket);
           }
         };
         window.addEventListener("resize", handleResize);
@@ -33,7 +34,7 @@ export default function Canvas({roomId,socket}: {roomId: string,socket:WebSocket
     useEffect(() => {
       if(canvasRef.current)
       {
-       initDraw(canvasRef.current,toolRef,roomId,socket)
+       initDraw(canvasRef.current,toolRef,selectedColorRef,roomId,socket)
       }
         
     }, [canvasRef,roomId,socket])
@@ -109,6 +110,13 @@ export default function Canvas({roomId,socket}: {roomId: string,socket:WebSocket
         >
         <Clipboard />
         </button>
+        {/* Color Picker */}
+        <input
+          type="color"
+          defaultValue={selectedColorRef.current}
+          onChange={(e) => (selectedColorRef.current = e.target.value)}
+          className="w-8 h-8 border-0 rounded cursor-pointer ml-2"
+        />
     </div>
     </div>
 }

@@ -3,6 +3,7 @@ import { Shape, Tool } from "./type";
 import { HTTP_BACKEND } from "@/config";
 
 export type ToolRef = React.MutableRefObject<Tool>;
+export type ColorRef = React.MutableRefObject<string>;
 
 type ShapeWithId = {
   id: number;
@@ -12,6 +13,7 @@ type ShapeWithId = {
 export function initDraw(
   canvas: HTMLCanvasElement,
   selectedToolRef: ToolRef,
+  selectedColorRef: ColorRef,
   roomId: string,
   socket: WebSocket
 ) {
@@ -29,7 +31,7 @@ export function initDraw(
   let lastPanX = 0,
     lastPanY = 0;
   let selectedId: number | null = null;
-  let hoverId: number | null = null;
+  // let hoverId: number | null = null;
   let currentPoints: { x: number; y: number }[] = [];
   let moveStart: { x: number; y: number } | null = null;
   // paste tool related state
@@ -45,7 +47,7 @@ export function initDraw(
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.strokeStyle = "white";
+    // ctx.strokeStyle = "white";
 
     for (const { id, shape } of shapes) {
       drawShape(shape, id === selectedId);
@@ -60,8 +62,9 @@ export function initDraw(
   }
 
   // ---- Draw shape logic
-  function drawShape(shape: Shape, highlight: boolean) {
+  function drawShape(shape:Shape, highlight: boolean) {
     ctx.beginPath();
+    ctx.strokeStyle = shape.color || selectedColorRef.current;
     if (highlight) {
       ctx.save();
       ctx.shadowColor = "rgba(255,255,255,0.7)";
@@ -329,7 +332,7 @@ export function initDraw(
 
     if (tool === "pencil") {
       currentPoints.push({ x: wx, y: wy });
-      drawAll({ type: "pencil", points: currentPoints });
+      drawAll({ type: "pencil", points: currentPoints,color: selectedColorRef.current });
       return;
     }
 
@@ -340,6 +343,7 @@ export function initDraw(
         y: startY,
         width: wx - startX,
         height: wy - startY,
+        color: selectedColorRef.current,
       });
       return;
     }
@@ -351,6 +355,7 @@ export function initDraw(
         x: startX,
         y: startY,
         radius,
+        color: selectedColorRef.current,
       });
       return;
     }
@@ -362,6 +367,7 @@ export function initDraw(
         y1: startY,
         x2: wx,
         y2: wy,
+        color: selectedColorRef.current,
       });
       return;
     }
@@ -387,7 +393,7 @@ export function initDraw(
     const tool = selectedToolRef.current;
 
     if (tool === "pencil" && currentPoints.length > 1) {
-      const newShape: Shape = { type: "pencil", points: currentPoints };
+      const newShape: Shape = { type: "pencil", points: currentPoints,color: selectedColorRef.current };
       currentPoints = [];
       const tempId = Date.now();
       shapes.push({ id: tempId, shape: newShape });
@@ -434,12 +440,13 @@ export function initDraw(
         y: startY,
         width: wx - startX,
         height: wy - startY,
+        color: selectedColorRef.current
       };
     } else if (tool === "circle") {
       const radius = Math.hypot(wx - startX, wy - startY) / 2;
-      newShape = { type: "circle", x: startX, y: startY, radius };
+      newShape = { type: "circle", x: startX, y: startY, radius,color: selectedColorRef.current };
     } else if (tool === "line") {
-      newShape = { type: "line", x1: startX, y1: startY, x2: wx, y2: wy };
+      newShape = { type: "line", x1: startX, y1: startY, x2: wx, y2: wy,color: selectedColorRef.current };
     }
 
     if (newShape) {
