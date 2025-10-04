@@ -115,7 +115,7 @@ export function AuthPage({ isSignin }: { isSignin: boolean }) {
         <p className="text-center mt-4 text-white">
           {isSignin ? "New user?" : "Already have an account?"}{" "}
           <Link
-            href={isSignin ? "/auth/signup" : "/auth/signin"}
+            href={isSignin ? "/signup" : "/signin"}
             className="text-indigo-400 hover:text-indigo-300 hover:underline"
           >
             {isSignin ? "Sign up" : "Sign in"}

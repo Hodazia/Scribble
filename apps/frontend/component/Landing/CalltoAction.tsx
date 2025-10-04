@@ -68,7 +68,7 @@ const CallToAction = () => {
               bg-indigo-600 text-white hover:bg-white hover:text-indigo-600
               group"
               onClick={()=>{
-                router.push("/auth/signin")
+                router.push("/signin")
               }}
             >
               Get Started for Free

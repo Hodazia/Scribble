@@ -64,6 +64,7 @@ export function initDraw(
   // ---- Draw shape logic
   function drawShape(shape:Shape, highlight: boolean) {
     ctx.beginPath();
+    //@ts-ignore
     ctx.strokeStyle = shape.color || selectedColorRef.current;
     if (highlight) {
       ctx.save();
@@ -280,7 +281,7 @@ export function initDraw(
     // Paste Tool: set target for Ctrl+V placement
     if (tool === "paste") {
         pasteTarget = { x: startX, y: startY };
-        alert("Now press Ctrl+V to paste your copied image here.");
+        // alert("Now press Ctrl+V to paste your copied image here.");
         return;
         }
     
