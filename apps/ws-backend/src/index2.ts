@@ -1,3 +1,9 @@
+/*
+this code is for practice only!
+
+
+*/
+
 import { WebSocketServer,WebSocket } from "ws";
 
 const wss = new WebSocketServer({port: 8081});

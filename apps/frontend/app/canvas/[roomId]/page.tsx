@@ -3,7 +3,7 @@
 // this is a server component and the RoomCanvas is a client component,
 // canvas is white by default
 
-import Canvas from "@/component/Canvas";
+// import Canvas from "@/component/Canvas";
 import { RoomCanvas } from "@/component/RoomCanvas";
 
 /*
@@ -14,11 +14,11 @@ We did this because to extract the roomId is done in server components and the R
 classcomponents
 
 */
-type Circle = {
-    x: number;
-    y: number;
-    radius: number;
-  };
+// type Circle = {
+//     x: number;
+//     y: number;
+//     radius: number;
+//   };
   
 /*
 

@@ -20,7 +20,7 @@ export function RoomCard({ roomId, slug, adminName }: RoomCardProps) {
 
     const token = localStorage.getItem("token");
     if (!token) {
-      router.push("/auth/signin");
+      router.push("/signin");
       return;
     }
 

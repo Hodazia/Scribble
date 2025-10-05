@@ -139,13 +139,13 @@ const Header = () => {
                 <div className="px-4 pt-4 space-y-2">
                   <Button
                     className="w-full bg-indigo-700 text-white hover:bg-white hover:text-indigo-700 rounded-lg border border-white/10"
-                    onClick={() => router.push("/auth/signin")}
+                    onClick={() => router.push("/signin")}
                   >
                     Sign In
                   </Button>
                   <Button
                     className="w-full bg-indigo-700 text-white hover:bg-white hover:text-indigo-700 rounded-lg"
-                    onClick={() => router.push("/auth/signup")}
+                    onClick={() => router.push("/signup")}
                   >
                     Get Started Free
                   </Button>

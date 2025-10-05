@@ -1,95 +1,149 @@
 'use client'
 import { motion } from "framer-motion";
-import { Plus, Users2, Palette } from "lucide-react";
+import { useState } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
-const steps = [
+const features = [
   {
-    icon: Plus,
-    title: "Create a Room",
-    description: "Start a new collaborative workspace in seconds. No setup required, just click and create.",
-    step: "01",
+    id: "smart-selection",
+    title: "Room selection",
+    description: "Once signed in, you will either see a list of rooms to join or you can create your own room!",
+    image: "/assets/feat1.png",
   },
   {
-    icon: Users2,
-    title: "Invite Your Team",
-    description: "Share your room link or invite teammates directly. Control access and permissions easily.",
-    step: "02",
+    id: "full-customisation",
+    title: "The Canvas",
+    description: "Once selected the room, create shapes ,draw smoothly on the canvas.",
+    image: "/assets/feat2.png",
   },
   {
-    icon: Palette,
-    title: "Start Drawing Together",
-    description: "Collaborate in real-time. Draw, sketch, annotate, and brainstorm as one unified team.",
-    step: "03",
+    id: "brandthetics-clips",
+    title: "Collaborative chat",
+    description: "You can share which room you are in with your friends and invite them into your room, and not only draw but also chat together!",
+    image: "/assets/feat3.png",
+  },
+  {
+    id: "upload-clips",
+    title: "Start using Scribble now!",
+    description: "Add as many team members, create collab draw chat together!",
+    image: "/assets/feat4.png",
   },
 ];
 
 const HowItWorks = () => {
-  return (
-    <section className="relative z-10 py-24 text-indigo-200 ">
-      <div className=" mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl lg:text-5xl font-extrabold">
-              Simple as {" "}
-              <span className="text-indigo-400">1, 2, 3</span>
-            </h2>
-            <p className="mt-4 text-lg lg:text-2xl text-indigo-200
-             max-w-2xl mx-auto">
-              Get started in minutes. No complex setup, no learning curve. 
-              Just pure collaboration.
-            </p>
-          </div>
+  const [activeFeature, setActiveFeature] = useState(features[0].id);
+  const router = useRouter();
 
-        <div className="max-w-5xl mx-auto">
-          <div className="grid lg:grid-cols-3 gap-12 lg:gap-8">
-            {steps.map((step, index) => (
-              <motion.div
-                key={step.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ 
-                  duration: 0.6, 
-                  delay: index * 0.2,
-                  ease: "easeOut"
-                }}
-                className="relative group"
+  return (
+    <section className="relative z-10 py-24 text-indigo-200">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl lg:text-5xl font-extrabold text-white mb-6">
+            How it{" "}
+            <span className="text-indigo-400">Works</span>
+          </h2>
+          <p className="text-lg lg:text-xl text-indigo-200 max-w-3xl mx-auto">
+            Powerful features designed for modern teams. From real-time drawing to secure collaboration, 
+            we've got everything covered.
+          </p>
+        </div>
+
+        <div className="max-w-7xl mx-auto">
+          {/* Feature Tabs */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+            {features.map((feature) => (
+              <motion.button
+                key={feature.id}
+                onClick={() => setActiveFeature(feature.id)}
+                whileHover={{ y: -2 }}
+                className={`p-6 rounded-xl text-left transition-all duration-300 ${
+                  activeFeature === feature.id
+                    ? "bg-indigo-700/60 border-2 border-indigo-400/50 shadow-lg"
+                    : "bg-white/5 border border-white/10 hover:bg-white/10"
+                }`}
               >
-                {/* Connection Line */}
-                {index < steps.length - 1 && (
-                  <div className="hidden lg:block absolute top-16 left-full w-full h-px bg-gradient-to-r from-indigo-400/30 to-transparent z-0" />
-                )}
-                
-                <div className="relative z-10 text-center">
-                  {/* Step Number */}
-                  <div className="inline-flex items-center justify-center w-20 h-20 rounded-full text-white font-bold text-xl mb-6 shadow-lg transition-all duration-300 bg-indigo-700/60 ring-1 ring-indigo-400/30">
-                    {step.step}
-                  </div>
-                  
-                  {/* Icon */}
-                  <motion.div
-                    whileHover={{ scale: 1.1 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                    className="inline-flex items-center justify-center w-16 h-16 rounded-xl mb-6 border border-white/10 bg-white/5 group-hover:border-white/20 transition-all duration-300"
-                  >
-                    <step.icon className="w-8 h-8 text-cyan-300" />
-                  </motion.div>
-                  
-                  <h3 className="text-2xl font-semibold mb-4 text-indigo-300">{step.title}</h3>
-                  <p className="text-indigo-200 leading-relaxed max-w-sm mx-auto">
-                    {step.description}
-                  </p>
-                </div>
-              </motion.div>
+                <h3 className="text-lg font-semibold text-white mb-3">
+                  {feature.title}
+                </h3>
+                <p className="text-sm text-indigo-200 leading-relaxed">
+                  {feature.description}
+                </p>
+              </motion.button>
             ))}
           </div>
-          
-          {/* Call to Action */}
-            <div className="mt-16 flex justify-center">
-              <div className="inline-flex items-center gap-3 text-sm lg:text-base text-indigo-200">
-                <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse" />
-                Ready in under 30 minutes
+
+          {/* Feature Preview */}
+          <motion.div
+            key={activeFeature}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="bg-white/5 rounded-2xl p-8 border border-white/10"
+          >
+            <div className="grid lg:grid-cols-2 gap-8 items-center">
+              {/* Image Preview */}
+              <div className="relative">
+                <div className="aspect-video rounded-xl overflow-hidden bg-black/20">
+                  <Image
+                    src={features.find(f => f.id === activeFeature)?.image || "/assets/feat1.png"}
+                    alt={features.find(f => f.id === activeFeature)?.title || "Feature preview"}
+                    width={600}
+                    height={400}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                {/* Floating Elements */}
+                <motion.div
+                  animate={{ y: [-5, 5, -5] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute top-4 right-4 bg-black/40 text-white backdrop-blur-sm rounded-lg p-3 shadow-lg border border-white/10"
+                >
+                  <div className="flex items-center gap-2 text-sm font-medium">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                    Live preview
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* Feature Details */}
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-2xl lg:text-3xl font-bold text-white mb-4">
+                    {features.find(f => f.id === activeFeature)?.title}
+                  </h3>
+                  <p className="text-lg text-indigo-200 leading-relaxed">
+                    {features.find(f => f.id === activeFeature)?.description}
+                  </p>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex flex-wrap gap-4">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-500 transition-colors shadow-lg"
+                    onClick={()=>{ router.push("/signin")}}
+                  >
+                    Try it now
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="px-6 py-3 bg-white/10 text-white rounded-lg font-medium hover:bg-white/20 transition-colors border border-white/20"
+                  >
+                    Learn more
+                  </motion.button>
+                </div>
+
+                {/* Status Indicator */}
+                <div className="flex items-center gap-3 text-sm text-indigo-200">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                  <span>Ready to use in under 30 seconds</span>
+                </div>
               </div>
             </div>
+          </motion.div>
         </div>
       </div>
     </section>

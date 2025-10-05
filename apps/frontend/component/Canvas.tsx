@@ -3,8 +3,8 @@
 import { useState,useEffect,useRef } from "react"
 import { initDraw } from "@/draw/Game";
 import { Tool } from "@/draw/type";
-import { Pencil,PenIcon,Clipboard, Minus, Circle,Eraser,MousePointer,Hand,RectangleHorizontal,TypeOutline } from "lucide-react";
-import { WS_BACKEND } from "@/config";
+import { Pencil,Clipboard, Minus, Circle,Eraser,MousePointer,Hand,RectangleHorizontal} from "lucide-react";
+// import { WS_BACKEND } from "@/config";
 
 export default function Canvas({roomId,socket}: {roomId: string,socket:WebSocket}){
     const canvasRef = useRef<HTMLCanvasElement>(null);

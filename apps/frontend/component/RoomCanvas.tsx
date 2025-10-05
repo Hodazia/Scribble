@@ -1,8 +1,8 @@
 "use client";
 
 import { WS_BACKEND } from "@/config";
-import { initDraw } from "@/draw/Game";
-import { useEffect, useRef, useState } from "react";
+// import { initDraw } from "@/draw/Game";
+import { useEffect,useState } from "react";
 import Canvas from "./Canvas";
 import { useRouter } from "next/navigation";
 import Chat from "./Chat";
@@ -14,7 +14,7 @@ export function RoomCanvas({roomId}: {roomId: string}) {
     useEffect(() => {
       const token = localStorage.getItem("token");
       if (!token) {
-        router.push("/auth/signin");
+        router.push("/signin");
         return;
       }
         const ws = new WebSocket(`${WS_BACKEND}?token=${token}`)
