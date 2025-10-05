@@ -3,7 +3,8 @@ import   { JWT_SECRET } from "@repo/backend-common/config";
 import jwt from "jsonwebtoken";
 import { prismaclient } from "@repo/db/client";
 import { parse } from "url"
-
+import express from "express"
+import { createServer } from "http";
 
 interface User {
     userId: string;
@@ -11,7 +12,9 @@ interface User {
     ws: WebSocket;
 }
 
-const wss = new WebSocketServer({ port: Number(process.env.PORT) || 8080 });
+const app = express();
+const server = createServer(app); // ✅ create an HTTP server for Render
+const wss = new WebSocketServer({server});
 let users: User[] = [];
 
 function checkUser(token: string): string | null {
@@ -196,4 +199,10 @@ wss.on("connection", function connection(ws: WebSocket, request) {
         users = users.filter((user) => user.ws !== ws);
         console.log("User disconnected, remaining users:", users);
     });
+});
+
+// ✅ Critical: Render expects this
+const PORT = process.env.PORT || 8080;
+server.listen(PORT, () => {
+  console.log(`✅ WS backend listening on port ${PORT}`);
 });
