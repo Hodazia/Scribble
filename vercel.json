@@ -1,13 +1,4 @@
 {
-    "projects": [
-      {
-        "name": "scribble-frontend",
-        "rootDirectory": "apps/frontend",
-        "buildCommand": "pnpm install --frozen-lockfile && pnpm run build",
-        "outputDirectory": ".next",
-        "installCommand": "pnpm install --frozen-lockfile",
-        "framework": "nextjs"
-      }
-    ]
+    "rootDirectory": "apps/frontend"
   }
   
