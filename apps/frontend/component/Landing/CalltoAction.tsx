@@ -50,7 +50,7 @@ const CallToAction = () => {
           </h2>
           
           <p className="text-xl lg:text-2xl text-indigo-200 mb-12 leading-relaxed">
-            Join thousands of teams already collaborating visually. 
+            Join others who are already collaborating visually. 
             Start creating together in under 30 seconds.
           </p>
 

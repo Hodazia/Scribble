@@ -88,7 +88,7 @@ const Hero = () => {
           transition={{ duration: 1.1, delay: 0.3 }}
           className="relative mt-10 w-full 
            rounded-2xl overflow-hidden 
-           max-w-6xl"
+           max-w-7xl"
         >
           {/* <Image
             src={landing}
